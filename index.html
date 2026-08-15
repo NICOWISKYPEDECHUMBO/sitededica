@@ -388,7 +388,6 @@ footer .copy{border-top:1px solid rgba(255,255,255,.12);margin-top:30px;padding-
         <div class="proto" id="proto"></div>
         <div class="row-btn">
           <a class="btn btn-next" id="sendWhats" target="_blank" rel="noopener">Enviar também por WhatsApp</a>
-          <button class="btn btn-back" id="dlJson">Baixar dados (JSON)</button>
         </div>
       </div>
 
@@ -506,10 +505,22 @@ bind('[name=cnpj]',maskCNPJ);bind('[name=cep]',maskCEP);bind('[name=fone]',maskF
 
 /* ---------- ViaCEP ---------- */
 const cepEl=document.querySelector('[name=cep]');
-cepEl.addEventListener('blur',async()=>{const c=onlyD(cepEl.value);if(c.length!==8)return;const hint=document.getElementById('cepHint');hint.textContent='Buscando endereço...';
-  try{const r=await fetch('https://viacep.com.br/ws/'+c+'/json/');const d=await r.json();if(d.erro){hint.textContent='CEP não encontrado. Preencha manualmente.';return;}
-    const set=(n,v)=>{const e=document.querySelector('[name='+n+']');if(e&&v)e.value=v;};set('rua',d.logradouro);set('bairro',d.bairro);set('cidade',d.localidade);set('uf',d.uf);hint.textContent='Endereço preenchido. Confira e complete.';}
-  catch(e){hint.textContent='Não foi possível buscar. Preencha manualmente.';}});
+async function buscarCEP(){
+  const c=onlyD(cepEl.value); const hint=document.getElementById('cepHint');
+  if(c.length!==8)return;
+  hint.textContent='Buscando endereço...';
+  try{
+    const r=await fetch('https://viacep.com.br/ws/'+c+'/json/'); const d=await r.json();
+    if(d.erro){hint.textContent='CEP não encontrado. Preencha manualmente.';return;}
+    const set=(n,v)=>{const e=document.querySelector('[name='+n+']');if(e&&v)e.value=v;};
+    set('rua',d.logradouro);set('bairro',d.bairro);set('cidade',d.localidade);set('uf',d.uf);
+    hint.textContent='Endereço preenchido. Confira e complete.';
+    const num=document.querySelector('[name=numero]'); if(num)num.focus();
+  }catch(e){hint.textContent='Não foi possível buscar. Preencha manualmente.';}
+}
+cepEl.addEventListener('input',()=>{ if(onlyD(cepEl.value).length===8) buscarCEP(); });
+cepEl.addEventListener('blur',buscarCEP);
+
 
 /* ---------- Validação ---------- */
 function validators(el){const t=el.dataset.v,v=el.value.trim();
@@ -559,7 +570,7 @@ function submitForm(){const d=collect();const proto='DS-'+new Date().getFullYear
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('steps').style.display='none';document.getElementById('actions').style.display='none';
   document.getElementById('success').classList.add('on');document.getElementById('success').scrollIntoView({behavior:'smooth',block:'center'});}
-document.getElementById('dlJson').onclick=()=>{if(!LAST)return;const blob=new Blob([JSON.stringify(LAST,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='credenciamento-'+LAST.proto+'.json';a.click();};
+
 
 /* ---------- Toast ---------- */
 let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600);}
