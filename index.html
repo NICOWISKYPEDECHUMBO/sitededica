@@ -366,12 +366,12 @@ footer .copy{border-top:1px solid rgba(255,255,255,.12);margin-top:30px;padding-
           <div class="field"><label>E-mail <span class="req">*</span></label><input data-v="email" name="email" inputmode="email" placeholder="nome@empresa.com.br"><div class="err">E-mail inválido.</div></div>
           <div class="field"><label>Telefone <span class="req">*</span></label><input data-v="fone" name="fone" inputmode="numeric" placeholder="(00) 00000-0000"><div class="err">Telefone inválido.</div></div>
           <div class="field full"><label>WhatsApp para retorno</label><input data-v="foneopt" name="whats" inputmode="numeric" placeholder="(00) 00000-0000"><div class="err">Número inválido.</div></div>
-          <div class="field full" style="margin-top:6px;padding-top:14px;border-top:1px dashed var(--line)"><label style="color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.04em;text-transform:uppercase">Dados do representante legal (para o contrato)</label><div class="hint">Opcional. Preenche o contrato automaticamente. Deixe em branco se preferir assinar depois.</div></div>
-          <div class="field full"><label>Nome do representante legal</label><input name="replegal" placeholder="Se diferente do responsável acima"></div>
-          <div class="field"><label>RG</label><input name="rg" placeholder="RG do representante"></div>
-          <div class="field"><label>CPF</label><input data-v="cpfopt" name="cpf" inputmode="numeric" placeholder="000.000.000-00"><div class="err">CPF inválido.</div></div>
-          <div class="field full"><label>Estado civil</label>
-            <select name="estadocivil"><option value="">Selecione</option><option>Solteiro(a)</option><option>Casado(a)</option><option>Divorciado(a)</option><option>Viúvo(a)</option><option>União estável</option></select></div>
+          <div class="field full" style="margin-top:6px;padding-top:14px;border-top:1px dashed var(--line)"><label style="color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.04em;text-transform:uppercase">Dados do representante legal (para o contrato)</label><div class="hint">Preenchimento obrigatório.</div></div>
+          <div class="field full"><label>Nome do representante legal <span class="req">*</span></label><input data-v="req" name="replegal" placeholder="Nome completo do representante"><div class="err">Informe o representante legal.</div></div>
+          <div class="field"><label>RG <span class="req">*</span></label><input data-v="req" name="rg" placeholder="RG do representante"><div class="err">Informe o RG.</div></div>
+          <div class="field"><label>CPF <span class="req">*</span></label><input data-v="cpf" name="cpf" inputmode="numeric" placeholder="000.000.000-00"><div class="err">CPF inválido.</div></div>
+          <div class="field full"><label>Estado civil <span class="req">*</span></label>
+            <select data-v="req" name="estadocivil"><option value="">Selecione</option><option>Solteiro(a)</option><option>Casado(a)</option><option>Divorciado(a)</option><option>Viúvo(a)</option><option>União estável</option></select><div class="err">Selecione o estado civil.</div></div>
         </div>
       </div>
 
@@ -535,6 +535,7 @@ function validators(el){const t=el.dataset.v,v=el.value.trim();
   if(t==='req')return v.length>0;if(t==='email')return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
   if(t==='cnpj')return onlyD(v).length===14;if(t==='cep')return onlyD(v).length===8;
   if(t==='fone')return onlyD(v).length>=10;if(t==='foneopt')return v===''||onlyD(v).length>=10;
+  if(t==='cpf')return onlyD(v).length===11;
   if(t==='cpfopt')return v===''||onlyD(v).length===11;return true;}
 function validatePanel(idx){const p=document.querySelector('[data-panel="'+idx+'"]');let ok=true;
   p.querySelectorAll('[data-v]').forEach(el=>{const f=el.closest('.field'),good=validators(el);f.classList.toggle('invalid',!good);if(!good)ok=false;});return ok;}
