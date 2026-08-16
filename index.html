@@ -564,7 +564,7 @@ function buildReview(){const d=collect();const line=(k,v)=>v?`<div class="row"><
 
 /* ---------- Envio ---------- */
 let LAST=null;
-const SHEETS_URL='https://script.google.com/macros/s/AKfycbyc2Z57edWQDocIUuf9ncGypGsz--62iCX30jb-_Uc7kvALtMJsHaVubNiBOdv2BjQR/exec';
+const SHEETS_URL='https://script.google.com/macros/s/AKfycbzSoqSEAwsuzM5e-xM8kxgAgkDXM3zakWwwGz1riUdvgOGd8ZDfeA7NA7hmuZ6V4cbT/exec';
 function submitForm(){const d=collect();const proto='DS-'+new Date().getFullYear()+'-'+Math.random().toString(36).slice(2,7).toUpperCase();
   LAST={proto,...d,enviadoEm:new Date().toISOString()};document.getElementById('proto').textContent='Protocolo '+proto;
   // grava na planilha (Google Apps Script) — no-cors não trava o envio
