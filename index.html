@@ -366,6 +366,12 @@ footer .copy{border-top:1px solid rgba(255,255,255,.12);margin-top:30px;padding-
           <div class="field"><label>E-mail <span class="req">*</span></label><input data-v="email" name="email" inputmode="email" placeholder="nome@empresa.com.br"><div class="err">E-mail inválido.</div></div>
           <div class="field"><label>Telefone <span class="req">*</span></label><input data-v="fone" name="fone" inputmode="numeric" placeholder="(00) 00000-0000"><div class="err">Telefone inválido.</div></div>
           <div class="field full"><label>WhatsApp para retorno</label><input data-v="foneopt" name="whats" inputmode="numeric" placeholder="(00) 00000-0000"><div class="err">Número inválido.</div></div>
+          <div class="field full" style="margin-top:6px;padding-top:14px;border-top:1px dashed var(--line)"><label style="color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.04em;text-transform:uppercase">Dados do representante legal (para o contrato)</label><div class="hint">Opcional. Preenche o contrato automaticamente. Deixe em branco se preferir assinar depois.</div></div>
+          <div class="field full"><label>Nome do representante legal</label><input name="replegal" placeholder="Se diferente do responsável acima"></div>
+          <div class="field"><label>RG</label><input name="rg" placeholder="RG do representante"></div>
+          <div class="field"><label>CPF</label><input data-v="cpfopt" name="cpf" inputmode="numeric" placeholder="000.000.000-00"><div class="err">CPF inválido.</div></div>
+          <div class="field full"><label>Estado civil</label>
+            <select name="estadocivil"><option value="">Selecione</option><option>Solteiro(a)</option><option>Casado(a)</option><option>Divorciado(a)</option><option>Viúvo(a)</option><option>União estável</option></select></div>
         </div>
       </div>
 
@@ -502,6 +508,8 @@ const maskCEP=v=>onlyD(v).slice(0,8).replace(/^(\d{5})(\d)/,'$1-$2');
 function maskFone(v){v=onlyD(v).slice(0,11);if(v.length<=10)return v.replace(/^(\d{2})(\d)/,'($1) $2').replace(/(\d{4})(\d)/,'$1-$2');return v.replace(/^(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2');}
 function bind(sel,fn){const el=document.querySelector(sel);el.addEventListener('input',()=>el.value=fn(el.value));}
 bind('[name=cnpj]',maskCNPJ);bind('[name=cep]',maskCEP);bind('[name=fone]',maskFone);bind('[name=whats]',maskFone);
+const maskCPF=v=>onlyD(v).slice(0,11).replace(/^(\d{3})(\d)/,'$1.$2').replace(/^(\d{3})\.(\d{3})(\d)/,'$1.$2.$3').replace(/\.(\d{3})(\d)/,'.$1-$2');
+bind('[name=cpf]',maskCPF);
 
 /* ---------- ViaCEP ---------- */
 const cepEl=document.querySelector('[name=cep]');
@@ -526,7 +534,8 @@ cepEl.addEventListener('blur',buscarCEP);
 function validators(el){const t=el.dataset.v,v=el.value.trim();
   if(t==='req')return v.length>0;if(t==='email')return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
   if(t==='cnpj')return onlyD(v).length===14;if(t==='cep')return onlyD(v).length===8;
-  if(t==='fone')return onlyD(v).length>=10;if(t==='foneopt')return v===''||onlyD(v).length>=10;return true;}
+  if(t==='fone')return onlyD(v).length>=10;if(t==='foneopt')return v===''||onlyD(v).length>=10;
+  if(t==='cpfopt')return v===''||onlyD(v).length===11;return true;}
 function validatePanel(idx){const p=document.querySelector('[data-panel="'+idx+'"]');let ok=true;
   p.querySelectorAll('[data-v]').forEach(el=>{const f=el.closest('.field'),good=validators(el);f.classList.toggle('invalid',!good);if(!good)ok=false;});return ok;}
 document.querySelectorAll('[data-v]').forEach(el=>el.addEventListener('input',()=>{const f=el.closest('.field');if(f.classList.contains('invalid'))f.classList.toggle('invalid',!validators(el));}));
@@ -545,7 +554,7 @@ document.getElementById('btnNext').onclick=()=>{if(!validatePanel(cur)){toast('C
 /* ---------- Coleta / revisão ---------- */
 function collect(){const get=n=>{const e=document.querySelector('[name='+n+']');return e?e.value.trim():'';};
   const servs=[...document.querySelectorAll('[name=serv]:checked')].map(c=>c.value);
-  return {razao:get('razao'),fantasia:get('fantasia'),cnpj:get('cnpj'),ie:get('ie'),ramo:get('ramo'),porte:get('porte'),cep:get('cep'),uf:get('uf'),rua:get('rua'),numero:get('numero'),compl:get('compl'),bairro:get('bairro'),cidade:get('cidade'),resp:get('resp'),cargo:get('cargo'),email:get('email'),fone:get('fone'),whats:get('whats'),servicos:servs,obs:get('obs')};}
+  return {razao:get('razao'),fantasia:get('fantasia'),cnpj:get('cnpj'),ie:get('ie'),ramo:get('ramo'),porte:get('porte'),cep:get('cep'),uf:get('uf'),rua:get('rua'),numero:get('numero'),compl:get('compl'),bairro:get('bairro'),cidade:get('cidade'),resp:get('resp'),cargo:get('cargo'),email:get('email'),fone:get('fone'),whats:get('whats'),replegal:get('replegal'),rg:get('rg'),cpf:get('cpf'),estadocivil:get('estadocivil'),servicos:servs,obs:get('obs')};}
 function buildReview(){const d=collect();const line=(k,v)=>v?`<div class="row"><span>${k}</span><b>${v}</b></div>`:'';const goto=i=>`<a onclick="showStep(${i})">editar</a>`;
   document.getElementById('review').innerHTML=`
     <div class="rev-block"><div class="rh"><b>Empresa</b>${goto(0)}</div><div style="padding:6px 16px 12px">${line('Razão social',d.razao)}${line('Nome fantasia',d.fantasia)}${line('CNPJ',d.cnpj)}${line('Insc. estadual',d.ie)}${line('Ramo',d.ramo)}${line('Colaboradores',d.porte)}</div></div>
@@ -563,7 +572,7 @@ function submitForm(){const d=collect();const proto='DS-'+new Date().getFullYear
     body:JSON.stringify({data_envio:new Date().toLocaleString('pt-BR'),protocolo:proto,
       razao:d.razao,fantasia:d.fantasia,cnpj:d.cnpj,ie:d.ie,ramo:d.ramo,porte:d.porte,
       cep:d.cep,rua:d.rua,numero:d.numero,compl:d.compl,bairro:d.bairro,cidade:d.cidade,uf:d.uf,
-      resp:d.resp,cargo:d.cargo,email:d.email,fone:d.fone,whats:d.whats,servicos:d.servicos,obs:d.obs})
+      resp:d.resp,cargo:d.cargo,email:d.email,fone:d.fone,whats:d.whats,replegal:d.replegal,rg:d.rg,cpf:d.cpf,estadocivil:d.estadocivil,servicos:d.servicos,obs:d.obs})
   }).catch(()=>{});
   const msg=`*Credenciamento — Dedica Saúde*%0AProtocolo: ${proto}%0A%0AEmpresa: ${d.razao}%0ACNPJ: ${d.cnpj}%0AResponsável: ${d.resp}%0AE-mail: ${d.email}%0ATelefone: ${d.fone}%0ACidade: ${d.cidade}/${d.uf}%0AServiços: ${d.servicos.join(', ')||'-'}`;
   document.getElementById('sendWhats').href='https://wa.me/5521967228800?text='+msg;
