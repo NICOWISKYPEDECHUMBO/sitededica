@@ -399,6 +399,36 @@ footer .copy{border-top:1px solid rgba(255,255,255,.12);margin-top:30px;padding-
         <h4>Serviços de interesse</h4><p class="desc">Selecione o que sua empresa precisa. Você pode marcar mais de um.</p>
         <div class="checks" id="checks"></div>
         <div class="field full" style="margin-top:16px"><label>Observações</label><textarea name="obs" placeholder="Conte detalhes que ajudem na sua proposta (nº de unidades, prazos, exames específicos...)."></textarea></div>
+
+        <div class="field full" style="margin-top:18px;padding-top:14px;border-top:1px dashed var(--line)"><label style="color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.04em;text-transform:uppercase">Como será o prontuário / forma de atendimento</label></div>
+        <div class="checks" style="grid-template-columns:1fr">
+          <label class="chk chk-forma"><input type="radio" name="forma" value="Enviará atendimento via SOCNET"><span><span class="k">Enviará atendimento via SOCNET</span></span></label>
+          <label class="chk chk-forma"><input type="radio" name="forma" value="Enviará kit (prontuário e ASO) por WhatsApp"><span><span class="k">Enviará kit (prontuário e ASO) por WhatsApp</span></span></label>
+          <label class="chk chk-forma"><input type="radio" name="forma" value="Usará nosso kit para atendimento"><span><span class="k">Usará nosso kit para atendimento</span></span></label>
+        </div>
+
+        <div class="field full" style="margin-top:18px;padding-top:14px;border-top:1px dashed var(--line)"><label style="color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.04em;text-transform:uppercase">Contatos da empresa</label><div class="hint">Opcional. Só vai para a planilha, não aparece no contrato.</div></div>
+
+        <div class="field full"><label style="font-weight:800">Financeiro</label></div>
+        <div class="grid">
+          <div class="field"><label>Nome</label><input name="fin_nome" placeholder="Responsável financeiro"></div>
+          <div class="field"><label>WhatsApp</label><input data-v="foneopt" name="fin_whats" inputmode="numeric" placeholder="(00) 00000-0000"><div class="err">Número inválido.</div></div>
+          <div class="field full"><label>E-mail</label><input name="fin_email" placeholder="financeiro@empresa.com.br"></div>
+        </div>
+
+        <div class="field full" style="margin-top:8px"><label style="font-weight:800">Agendamento</label></div>
+        <div class="grid">
+          <div class="field"><label>Nome</label><input name="age_nome" placeholder="Responsável agendamento"></div>
+          <div class="field"><label>WhatsApp</label><input data-v="foneopt" name="age_whats" inputmode="numeric" placeholder="(00) 00000-0000"><div class="err">Número inválido.</div></div>
+          <div class="field full"><label>E-mail</label><input name="age_email" placeholder="agendamento@empresa.com.br"></div>
+        </div>
+
+        <div class="field full" style="margin-top:8px"><label style="font-weight:800">Resultados</label></div>
+        <div class="grid">
+          <div class="field"><label>Nome</label><input name="res_nome" placeholder="Responsável resultados"></div>
+          <div class="field"><label>WhatsApp</label><input data-v="foneopt" name="res_whats" inputmode="numeric" placeholder="(00) 00000-0000"><div class="err">Número inválido.</div></div>
+          <div class="field full"><label>E-mail</label><input name="res_email" placeholder="resultados@empresa.com.br"></div>
+        </div>
       </div>
 
       <div class="panel" data-panel="4">
@@ -528,6 +558,7 @@ const maskCEP=v=>onlyD(v).slice(0,8).replace(/^(\d{5})(\d)/,'$1-$2');
 function maskFone(v){v=onlyD(v).slice(0,11);if(v.length<=10)return v.replace(/^(\d{2})(\d)/,'($1) $2').replace(/(\d{4})(\d)/,'$1-$2');return v.replace(/^(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2');}
 function bind(sel,fn){const el=document.querySelector(sel);el.addEventListener('input',()=>el.value=fn(el.value));}
 bind('[name=cnpj]',maskCNPJ);bind('[name=cep]',maskCEP);bind('[name=fone]',maskFone);bind('[name=whats]',maskFone);
+['fin_whats','age_whats','res_whats'].forEach(function(n){var el=document.querySelector('[name='+n+']');if(el)bind('[name='+n+']',maskFone);});
 const maskCPF=v=>onlyD(v).slice(0,11).replace(/^(\d{3})(\d)/,'$1.$2').replace(/^(\d{3})\.(\d{3})(\d)/,'$1.$2.$3').replace(/\.(\d{3})(\d)/,'.$1-$2');
 bind('[name=cpf]',maskCPF);
 
@@ -575,13 +606,13 @@ document.getElementById('btnNext').onclick=()=>{if(!validatePanel(cur)){toast('C
 /* ---------- Coleta / revisão ---------- */
 function collect(){const get=n=>{const e=document.querySelector('[name='+n+']');return e?e.value.trim():'';};
   const servs=[...document.querySelectorAll('[name=serv]:checked')].map(c=>c.value);
-  return {razao:get('razao'),fantasia:get('fantasia'),cnpj:get('cnpj'),ie:get('ie'),ramo:get('ramo'),porte:get('porte'),cep:get('cep'),uf:get('uf'),rua:get('rua'),numero:get('numero'),compl:get('compl'),bairro:get('bairro'),cidade:get('cidade'),resp:get('resp'),cargo:get('cargo'),email:get('email'),fone:get('fone'),whats:get('whats'),replegal:get('replegal'),rg:get('rg'),cpf:get('cpf'),estadocivil:get('estadocivil'),servicos:servs,obs:get('obs')};}
+  return {razao:get('razao'),fantasia:get('fantasia'),cnpj:get('cnpj'),ie:get('ie'),ramo:get('ramo'),porte:get('porte'),cep:get('cep'),uf:get('uf'),rua:get('rua'),numero:get('numero'),compl:get('compl'),bairro:get('bairro'),cidade:get('cidade'),resp:get('resp'),cargo:get('cargo'),email:get('email'),fone:get('fone'),whats:get('whats'),replegal:get('replegal'),rg:get('rg'),cpf:get('cpf'),estadocivil:get('estadocivil'),forma:get('forma')||(document.querySelector('[name=forma]:checked')?document.querySelector('[name=forma]:checked').value:''),fin_nome:get('fin_nome'),fin_whats:get('fin_whats'),fin_email:get('fin_email'),age_nome:get('age_nome'),age_whats:get('age_whats'),age_email:get('age_email'),res_nome:get('res_nome'),res_whats:get('res_whats'),res_email:get('res_email'),servicos:servs,obs:get('obs')};}
 function buildReview(){const d=collect();const line=(k,v)=>v?`<div class="row"><span>${k}</span><b>${v}</b></div>`:'';const goto=i=>`<a onclick="showStep(${i})">editar</a>`;
   document.getElementById('review').innerHTML=`
     <div class="rev-block"><div class="rh"><b>Empresa</b>${goto(0)}</div><div style="padding:6px 16px 12px">${line('Razão social',d.razao)}${line('Nome fantasia',d.fantasia)}${line('CNPJ',d.cnpj)}${line('Insc. estadual',d.ie)}${line('Ramo',d.ramo)}${line('Colaboradores',d.porte)}</div></div>
     <div class="rev-block"><div class="rh"><b>Endereço</b>${goto(1)}</div><div style="padding:6px 16px 12px">${line('Logradouro',[d.rua,d.numero,d.compl].filter(Boolean).join(', '))}${line('Bairro',d.bairro)}${line('Cidade/UF',[d.cidade,d.uf].filter(Boolean).join(' / '))}${line('CEP',d.cep)}</div></div>
     <div class="rev-block"><div class="rh"><b>Contato</b>${goto(2)}</div><div style="padding:6px 16px 12px">${line('Responsável',d.resp)}${line('Cargo',d.cargo)}${line('E-mail',d.email)}${line('Telefone',d.fone)}${line('WhatsApp',d.whats)}</div></div>
-    <div class="rev-block"><div class="rh"><b>Serviços</b>${goto(3)}</div><div style="padding:6px 16px 12px">${line('Interesse',d.servicos.join(' · '))}${line('Observações',d.obs)}</div></div>`;}
+    <div class="rev-block"><div class="rh"><b>Serviços</b>${goto(3)}</div><div style="padding:6px 16px 12px">${line('Interesse',d.servicos.join(' · '))}${line('Forma de atendimento',d.forma)}${line('Observações',d.obs)}</div></div>`;}
 
 /* ---------- Envio ---------- */
 let LAST=null;
@@ -593,7 +624,7 @@ function submitForm(){const d=collect();const proto='DS-'+new Date().getFullYear
     body:JSON.stringify({data_envio:new Date().toLocaleString('pt-BR'),protocolo:proto,
       razao:d.razao,fantasia:d.fantasia,cnpj:d.cnpj,ie:d.ie,ramo:d.ramo,porte:d.porte,
       cep:d.cep,rua:d.rua,numero:d.numero,compl:d.compl,bairro:d.bairro,cidade:d.cidade,uf:d.uf,
-      resp:d.resp,cargo:d.cargo,email:d.email,fone:d.fone,whats:d.whats,replegal:d.replegal,rg:d.rg,cpf:d.cpf,estadocivil:d.estadocivil,servicos:d.servicos,obs:d.obs})
+      resp:d.resp,cargo:d.cargo,email:d.email,fone:d.fone,whats:d.whats,replegal:d.replegal,rg:d.rg,cpf:d.cpf,estadocivil:d.estadocivil,forma:d.forma,fin_nome:d.fin_nome,fin_whats:d.fin_whats,fin_email:d.fin_email,age_nome:d.age_nome,age_whats:d.age_whats,age_email:d.age_email,res_nome:d.res_nome,res_whats:d.res_whats,res_email:d.res_email,servicos:d.servicos,obs:d.obs})
   }).catch(()=>{});
   const msg=`*Credenciamento — Dedica Saúde*%0AProtocolo: ${proto}%0A%0AEmpresa: ${d.razao}%0ACNPJ: ${d.cnpj}%0AResponsável: ${d.resp}%0AE-mail: ${d.email}%0ATelefone: ${d.fone}%0ACidade: ${d.cidade}/${d.uf}%0AServiços: ${d.servicos.join(', ')||'-'}`;
   document.getElementById('sendWhats').href='https://wa.me/5521967228800?text='+msg;
